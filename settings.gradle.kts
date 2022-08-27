@@ -1,3 +1,1 @@
-
-rootProject.name = "CrossPlatformRuntime"
-
+rootProject.name = "cpr"
