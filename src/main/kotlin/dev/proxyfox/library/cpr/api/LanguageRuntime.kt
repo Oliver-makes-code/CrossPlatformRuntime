@@ -9,9 +9,18 @@ class CprCallableGuest(val runner: (args: Array<out Any?>) -> Any?) {
 }
 
 interface LanguageRuntime {
+    val langPrefix: String
+    var defaultRunnables: Array<String>
     fun init(program: String)
     fun addRunnable(name: String, runnable: CprCallableHost)
     fun run()
     fun getRunnables(): Array<String>
     fun getRunnable(name: String): CprCallableGuest
+    fun exportDefaultFunctions(other: LanguageRuntime) {
+        for (name in defaultRunnables) {
+            other.addRunnable("${langPrefix}_$name") {
+                getRunnable(name)(*it)
+            }
+        }
+    }
 }

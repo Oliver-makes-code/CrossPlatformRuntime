@@ -9,16 +9,19 @@ import org.graalvm.polyglot.HostAccess
 import org.graalvm.polyglot.Value
 
 class GraalJsRuntime : LanguageRuntime {
-    val context = Context
+    private val context: Context = Context
         .newBuilder("js")
         .allowHostAccess(HostAccess.EXPLICIT)
         .build()
-    val bindings = context.getBindings("js")
-    lateinit var value: Value
-    lateinit var defaultRunnables: Array<String>
+    private val bindings: Value = context.getBindings("js")
+    private lateinit var value: Value
+    override lateinit var defaultRunnables: Array<String>
+    override val langPrefix: String = "js"
+
     override fun init(program: String) {
         value = context.parse("js", program)
         value.execute()
+        defaultRunnables = getRunnables()
     }
     override fun addRunnable(name: String, runnable: CprCallableHost) {
         bindings.putMember("__cpr_internal_${name.replace(".","_")}__", GraalRunnable(this, runnable))
@@ -46,6 +49,12 @@ class GraalJsRuntime : LanguageRuntime {
     override fun getRunnable(name: String): CprCallableGuest {
         return CprCallableGuest {
             bindings.getMember(name).execute(*it)
+        }
+    }
+
+    companion object {
+        init {
+            System.setProperty("polyglot.engine.WarnInterpreterOnly", "false")
         }
     }
 }

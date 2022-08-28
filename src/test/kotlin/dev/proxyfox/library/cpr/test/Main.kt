@@ -24,12 +24,9 @@ fun main() {
         def test():
             print("Python called from JavaScript!")
     """.replace("\n        ","\n"))
-    js.addRunnable("py_test") {
-        py.getRunnable("test")(*it)
-    }
-    py.addRunnable("js_test") {
-        js.getRunnable("test")(*it)
-    }
+
+    js.exportDefaultFunctions(py)
+    py.exportDefaultFunctions(js)
 
     js.run()
     py.run()

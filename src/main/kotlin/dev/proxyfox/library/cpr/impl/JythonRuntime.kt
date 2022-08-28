@@ -15,11 +15,15 @@ import kotlin.collections.ArrayList
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class JythonRuntime : LanguageRuntime {
-    val python = PythonInterpreter()
-    lateinit var code: PyCode
+    private val python = PythonInterpreter()
+    private lateinit var code: PyCode
+    override val langPrefix: String = "py"
+    override lateinit var defaultRunnables: Array<String>
+
     override fun init(program: String) {
         code = python.compile(program)
         python.eval(code)
+        defaultRunnables = getRunnables()
     }
 
     override fun addRunnable(name: String, runnable: CprCallableHost) {
@@ -42,7 +46,7 @@ class JythonRuntime : LanguageRuntime {
                 out.add(name)
             }
         }
-        return arrayOf()
+        return out.toTypedArray()
     }
 
     override fun getRunnable(name: String): CprCallableGuest {
