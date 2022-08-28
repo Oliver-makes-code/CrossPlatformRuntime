@@ -31,9 +31,6 @@ class GraalJsRuntime : LanguageRuntime {
             }
         """.trimIndent())
     }
-    override fun run() {
-        getRunnable("main")()
-    }
 
     override fun getRunnables(): Array<String> {
         val out = ArrayList<String>()

@@ -13,13 +13,15 @@ interface LanguageRuntime {
     var defaultRunnables: Array<String>
     fun init(program: String)
     fun addRunnable(name: String, runnable: CprCallableHost)
-    fun run()
+    fun run() {
+        getRunnable("main")()
+    }
     fun getRunnables(): Array<String>
     fun getRunnable(name: String): CprCallableGuest
     fun exportTopLevelRunnables(other: LanguageRuntime) {
         for (name in defaultRunnables) {
             other.addRunnable("${langPrefix}_$name") {
-                getRunnable(name)(*it)
+                this@LanguageRuntime.getRunnable(name)()
             }
         }
     }

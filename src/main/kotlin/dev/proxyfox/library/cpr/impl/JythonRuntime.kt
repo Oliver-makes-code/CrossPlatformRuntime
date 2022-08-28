@@ -34,10 +34,6 @@ class JythonRuntime : LanguageRuntime {
         """.replace("\n            ","\n"))
     }
 
-    override fun run() {
-        python["main"].__call__()
-    }
-
     override fun getRunnables(): Array<String> {
         val out = ArrayList<String>()
         val locals = python.locals as PyStringMap
