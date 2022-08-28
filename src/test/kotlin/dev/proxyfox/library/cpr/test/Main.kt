@@ -25,8 +25,8 @@ fun main() {
             print("Python called from JavaScript!")
     """.replace("\n        ","\n"))
 
-    js.exportDefaultFunctions(py)
-    py.exportDefaultFunctions(js)
+    js.exportTopLevelRunnables(py)
+    py.exportTopLevelRunnables(js)
 
     js.run()
     py.run()
