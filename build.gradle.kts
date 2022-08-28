@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.python:jython:2.7.3b1")
     implementation("org.graalvm.js:js:22.2.0")
     implementation(kotlin("reflect"))
 }

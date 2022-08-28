@@ -7,7 +7,6 @@ import dev.proxyfox.library.cpr.impl.graal.GraalRunnable
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.HostAccess
 import org.graalvm.polyglot.Value
-import kotlin.reflect.KFunction
 
 class GraalJsRuntime : LanguageRuntime {
     val context = Context
@@ -16,19 +15,21 @@ class GraalJsRuntime : LanguageRuntime {
         .build()
     val bindings = context.getBindings("js")
     lateinit var value: Value
+    lateinit var defaultRunnables: Array<String>
     override fun init(program: String) {
         value = context.parse("js", program)
+        value.execute()
     }
     override fun <T> addRunnable(name: String, runnable: CprCallableHost<T>) {
-        bindings.putMember("__cpr_internal_${name}__", GraalRunnable(this, runnable))
+        bindings.putMember("__cpr_internal_${name.replace(".","_")}__", GraalRunnable(this, runnable))
         context.eval("js", """
-            function $name() {
-                return __cpr_internal_${name}__.run(arguments)
+            function ${name.replace(".","_")}() {
+                return __cpr_internal_${name.replace(".","_")}__.run(arguments)
             }
         """.trimIndent())
     }
     override fun run() {
-        value.execute()
+        getRunnable("main")()
     }
 
     override fun getRunnables(): Array<String> {
