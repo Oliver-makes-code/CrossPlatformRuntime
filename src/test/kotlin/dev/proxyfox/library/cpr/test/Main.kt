@@ -11,19 +11,26 @@ fun main() {
 
     js.init("""
         function main() {
-            py_testFunc()
+            py_test()
+        }
+        function test() {
+            console.log("JavaScript called from Python!")
         }
     """.replace("\n        ","\n"))
 
     py.init("""
         def main():
-            pass
+            js_test()
         def test():
             print("Python called from JavaScript!")
     """.replace("\n        ","\n"))
-    js.addRunnable("py_testFunc") {
+    js.addRunnable("py_test") {
         py.getRunnable("test")(*it)
     }
+    py.addRunnable("js_test") {
+        js.getRunnable("test")(*it)
+    }
+
     js.run()
     py.run()
 }

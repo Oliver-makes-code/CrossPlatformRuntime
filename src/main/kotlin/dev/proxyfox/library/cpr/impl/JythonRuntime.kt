@@ -3,6 +3,7 @@ package dev.proxyfox.library.cpr.impl
 import dev.proxyfox.library.cpr.api.CprCallableGuest
 import dev.proxyfox.library.cpr.api.CprCallableHost
 import dev.proxyfox.library.cpr.api.LanguageRuntime
+import dev.proxyfox.library.cpr.impl.jython.JythonCallable
 import org.python.core.Py
 import org.python.core.PyCode
 import org.python.core.PyObject
@@ -22,7 +23,13 @@ class JythonRuntime : LanguageRuntime {
     }
 
     override fun <T> addRunnable(name: String, runnable: CprCallableHost<T>) {
-        TODO("Not yet implemented")
+        python["__cpr_internal_${name.replace(".","_")}__"] = JythonCallable<T>(this) {
+            runnable(it)
+        }
+        python.exec("""
+            def ${name.replace(".","_")}(*args):
+                __cpr_internal_${name.replace(".","_")}__.run(args)
+        """.replace("\n            ","\n"))
     }
 
     override fun run() {
