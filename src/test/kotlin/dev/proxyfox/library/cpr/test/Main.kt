@@ -18,8 +18,8 @@ fun main() {
             pass
     """.replace("\n        ","\n"))
 
-    js.exportTopLevelRunnables(py)
-    py.exportTopLevelRunnables(js)
+    js.exportDefaultRunnables(py)
+    py.exportDefaultRunnables(js)
 
     js.run()
     py.run()

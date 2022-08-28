@@ -18,7 +18,7 @@ interface LanguageRuntime {
     }
     fun getRunnables(): Array<String>
     fun getRunnable(name: String): CprCallableGuest
-    fun exportTopLevelRunnables(other: LanguageRuntime) {
+    fun exportDefaultRunnables(other: LanguageRuntime) {
         for (name in defaultRunnables) {
             other.addRunnable("${langPrefix}_$name") {
                 this@LanguageRuntime.getRunnable(name)()

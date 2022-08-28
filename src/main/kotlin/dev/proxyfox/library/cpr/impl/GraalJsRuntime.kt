@@ -33,19 +33,31 @@ class GraalJsRuntime : LanguageRuntime {
     }
 
     override fun getRunnables(): Array<String> {
+        return getRunnables(bindings)
+    }
+
+    private fun getRunnables(member: Value, path: String = ""): Array<String> {
         val out = ArrayList<String>()
-        val members = bindings.memberKeys
-        for (member in members) {
-            if (bindings.getMember(member).canExecute()) {
-                out.add(member)
+        val members = member.memberKeys
+        for (memberName in members) {
+            val value = member.getMember(memberName)
+            val newPath = if (path.isBlank()) memberName else "$path.$memberName"
+            if (value.canExecute()) {
+                out.add(newPath)
             }
+            out.addAll(getRunnables(value, newPath))
         }
         return out.toTypedArray()
     }
 
     override fun getRunnable(name: String): CprCallableGuest {
+        val split = name.split(".")
+        var member = bindings
+        for (i in split) {
+            member = member.getMember(i)
+        }
         return CprCallableGuest {
-            bindings.getMember(name).execute(*it)
+            member.execute(*it)
         }
     }
 
