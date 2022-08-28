@@ -20,7 +20,7 @@ class GraalJsRuntime : LanguageRuntime {
         value = context.parse("js", program)
         value.execute()
     }
-    override fun <T> addRunnable(name: String, runnable: CprCallableHost<T>) {
+    override fun addRunnable(name: String, runnable: CprCallableHost) {
         bindings.putMember("__cpr_internal_${name.replace(".","_")}__", GraalRunnable(this, runnable))
         context.eval("js", """
             function ${name.replace(".","_")}() {

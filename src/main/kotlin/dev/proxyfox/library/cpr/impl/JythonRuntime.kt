@@ -22,13 +22,11 @@ class JythonRuntime : LanguageRuntime {
         python.eval(code)
     }
 
-    override fun <T> addRunnable(name: String, runnable: CprCallableHost<T>) {
-        python["__cpr_internal_${name.replace(".","_")}__"] = JythonCallable<T>(this) {
-            runnable(it)
-        }
+    override fun addRunnable(name: String, runnable: CprCallableHost) {
+        python["__cpr_internal_${name.replace(".","_")}__"] = JythonCallable(this, runnable)
         python.exec("""
             def ${name.replace(".","_")}(*args):
-                __cpr_internal_${name.replace(".","_")}__.run(args)
+                return __cpr_internal_${name.replace(".","_")}__.run(args)
         """.replace("\n            ","\n"))
     }
 

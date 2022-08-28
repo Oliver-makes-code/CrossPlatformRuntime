@@ -1,6 +1,6 @@
 package dev.proxyfox.library.cpr.api
 
-typealias CprCallableHost<T> = LanguageRuntime.(args: Array<Any?>) -> T
+typealias CprCallableHost = LanguageRuntime.(args: Array<Any?>) -> Any?
 
 class CprCallableGuest(val runner: (args: Array<out Any?>) -> Any?) {
     operator fun invoke(vararg args: Any?): Any? {
@@ -10,7 +10,7 @@ class CprCallableGuest(val runner: (args: Array<out Any?>) -> Any?) {
 
 interface LanguageRuntime {
     fun init(program: String)
-    fun <T> addRunnable(name: String, runnable: CprCallableHost<T>)
+    fun addRunnable(name: String, runnable: CprCallableHost)
     fun run()
     fun getRunnables(): Array<String>
     fun getRunnable(name: String): CprCallableGuest
